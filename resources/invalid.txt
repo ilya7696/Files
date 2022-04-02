@@ -1,0 +1,4 @@
+docnum89 3ksla5 error: Содержит не только символы или цифры
+docnum8943ksla5v error: Длина не 15
+hjkajsdlaksskls error: Не начинается с docnum или contract
+lkalkan123 error: Длина не 15
