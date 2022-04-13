@@ -45,47 +45,52 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Введите путь к файлу: ");
         String path = scanner.nextLine();
 
-        // Получили содержимое файла
-        BufferedReader reader = Files.newBufferedReader(Paths.get(path));
+        try {
+            // Получили содержимое файла
+            BufferedReader reader = Files.newBufferedReader(Paths.get(path));
 
-        // Список номеров документов из файла
-        List<String> docNums = reader.lines().collect(Collectors.toList());
+            // Список номеров документов из файла
+            List<String> docNums = reader.lines().collect(Collectors.toList());
 
-        List<String> validDocNums = new ArrayList<>();
-        Map<String, String> invalidDocNums = new HashMap<>();
-        for (String docNum : docNums) {
-            if (docNum.length() != 15) {
-                invalidDocNums.put(docNum, "Длина не 15");
-                continue;
-            }
-            if (!(docNum.startsWith("docnum") || docNum.startsWith("contract"))) {
-                invalidDocNums.put(docNum, "Не начинается с docnum или contract");
-                continue;
-            }
-            if (!docNum.matches("^(\\d|\\w)+$")) {
-                invalidDocNums.put(docNum, "Содержит не только символы или цифры");
-                continue;
+            List<String> validDocNums = new ArrayList<>();
+            Map<String, String> invalidDocNums = new HashMap<>();
+            for (String docNum : docNums) {
+                if (docNum.length() != 15) {
+                    invalidDocNums.put(docNum, "Длина не 15");
+                    continue;
+                }
+                if (!(docNum.startsWith("docnum") || docNum.startsWith("contract"))) {
+                    invalidDocNums.put(docNum, "Не начинается с docnum или contract");
+                    continue;
+                }
+                if (!docNum.matches("^(\\d|\\w)+$")) {
+                    invalidDocNums.put(docNum, "Содержит не только символы или цифры");
+                    continue;
+                }
+
+                validDocNums.add(docNum);
             }
 
-            validDocNums.add(docNum);
+            FileWriter valid = new FileWriter("./resources/valid.txt");
+            FileWriter invalid = new FileWriter("./resources/invalid.txt");
+
+            for (String docNum : validDocNums) valid.write(docNum + "\n");
+
+            for (Map.Entry<String, String> entry : invalidDocNums.entrySet())
+                invalid.write(entry.getKey() + " error: " + entry.getValue() + "\n");
+
+            reader.close();
+            valid.close();
+            invalid.close();
+        } catch (IOException e){
+            System.out.println("Something wrong");
+            e.printStackTrace();
         }
-
-        FileWriter valid = new FileWriter("./resources/valid.txt");
-        FileWriter invalid = new FileWriter("./resources/invalid.txt");
-
-        for (String docNum : validDocNums) valid.write(docNum+"\n");
-
-        for (Map.Entry<String, String> entry : invalidDocNums.entrySet())
-            invalid.write(entry.getKey() + " error: " + entry.getValue()+"\n");
-
         scanner.close();
-        reader.close();
-        valid.close();
-        invalid.close();
     }
 }
